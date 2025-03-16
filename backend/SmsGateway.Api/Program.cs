@@ -2,8 +2,6 @@ using SMSGateway.Core.Models;
 using SMSGateway.Core.Interfaces;
 using SmsGateway.Core;
 
-// using SMSGateway.Infrastructure.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,6 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<RateLimitConfig>(builder.Configuration.GetSection("RateLimit"));
 
 builder.Services.AddSingleton<IRateLimitingService, SlidingWindowRateLimiter>();
+builder.Services.AddHostedService<PurgeBackgroundService>();
 
 var app = builder.Build();
 

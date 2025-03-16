@@ -4,7 +4,7 @@ using SmsGateway.Core.Enums;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("SmsGateway.Tests")]
+// [assembly: InternalsVisibleTo("SmsGateway.Tests")]
 namespace SmsGateway.Core;
 
 
@@ -141,74 +141,50 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
         return;
     }
 
-
-
     public async Task CleanupStaleResources() {
         DateTime now = DateTime.UtcNow;
-        var phoneNumberCleanupTask = CleanupResourceAsync(_phoneNumberMessages, _phoneNumberLock, now, _rateLimitConfig.ResourceExpirationTime);
-        var accountCleanupTask = CleanupResourceAsync(_accountMessages, _accountLock, now, _rateLimitConfig.ResourceExpirationTime);
-        await Task.WhenAll(phoneNumberCleanupTask, accountCleanupTask);
+
+        // Process phonenumbers and accounts in parallel, since they are independent
+        await Task.WhenAll(
+            Task.Run(() => PurgeMessages(_phoneNumberLock, _phoneNumberMessages, now, _rateLimitConfig.ResourceExpirationTime)),
+            Task.Run(() => PurgeMessages(_accountLock, _accountMessages, now, _rateLimitConfig.ResourceExpirationTime))
+        );
     }
 
-    private async Task CleanupResourceAsync(Dictionary<string, LinkedList<DateTime>> messages, ReaderWriterLockSlim lockObj, DateTime now, TimeSpan expirationTime) {
-        lockObj.EnterUpgradeableReadLock();
-        //Initialize a dictionary with each id as a string, and a 0 count
-        Dictionary<string, int> messagesToPurge = messages.Keys.ToDictionary(id => id, id => 0);
+    private void PurgeMessages(ReaderWriterLockSlim lockObj, Dictionary<string, LinkedList<DateTime>> messageQueue, DateTime now, TimeSpan expirationTime) {
+        lockObj.EnterWriteLock();
+
         try {
-            foreach (var messageId in messagesToPurge.Keys) {
+            var messagesToProcess = messageQueue.Keys.ToList();
+            //Since we have a fixed list of messages to process, we can use a parallel for loop
+            Parallel.ForEach(messagesToProcess, messageId => {
+                // Perform purging logic for each messageId
+                if (messageQueue.ContainsKey(messageId)) {
+                    var messageList = messageQueue[messageId];
 
-                // If the newest message is older than the expiration time, we can remove all messages
-                var newestMessage = messages[messageId].Last();
-                if (now - newestMessage > expirationTime) {
-                    messagesToPurge[messageId] = -1; //-1 indicates remove all
-                    continue;
-                }
-
-                var node = messages[messageId].First;
-                if (node == null) {
-                    continue;
-                }
-
-                var count = 0;
-                var numAccountIds = messages[messageId].Count;
-                while (count < numAccountIds && now - node.Value < expirationTime) {
-                    node = node.Next;
-                    if (node == null) {
-                        break;
+                    // If the newest message is older than the expiration time, we can remove all messages and return faster
+                    var newestMessage = messageList.Last();
+                    if (now - newestMessage > expirationTime) {
+                        messageQueue.Remove(messageId); 
+                        return;
                     }
-                    count++;
-                }
 
-                if (count == numAccountIds) {
-                    messagesToPurge[messageId] = -1;
-                } else {
-                    messagesToPurge[messageId] = count;
-                }
-            }
+                    // Remove expired messages
+                    while (messageList.Count > 0 && now - messageList.First() > expirationTime) {
+                        messageList.RemoveFirst();
+                    }
 
-            //Enter a write lock to remove the messages
-            try {
-                lockObj.EnterWriteLock();
-                foreach (var messageId in messagesToPurge.Keys) {
-                    if (messagesToPurge[messageId] == -1) {
-                        messages.Remove(messageId);
-                    } else {
-                        while (messagesToPurge[messageId] > 0) {
-                            messages[messageId].RemoveFirst();
-                            messagesToPurge[messageId]--;
-                        }
+                    // If no messages left, remove the messageId from the queue
+                    if (messageList.Count == 0) {
+                        messageQueue.Remove(messageId);
                     }
                 }
-            }
-            finally {
-                if (lockObj.IsWriteLockHeld) 
-                    lockObj.ExitWriteLock();
-            }
+            });
         }
         finally {
-            lockObj.ExitUpgradeableReadLock();
+            if (lockObj.IsWriteLockHeld)
+                lockObj.ExitWriteLock();
+
         }
     }
-
-
 }
