@@ -1,0 +1,5 @@
+{
+    "csharp.format.enable": true,
+    "dotnet-test-explorer.testProjectPath": "../backend/SmsGateway.Tests/SmsGateway.Tests.csproj"
+
+}

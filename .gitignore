@@ -1,3 +1,4 @@
+.editorconfig
 src/
 backend/SmsGateway.Api/bin/
 backend/SmsGateway.Api/obj/

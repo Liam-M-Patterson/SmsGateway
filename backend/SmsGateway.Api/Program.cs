@@ -11,7 +11,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure rate limiting with RabbitMQ
 builder.Services.Configure<RateLimitConfig>(builder.Configuration.GetSection("RateLimit"));
 
 builder.Services.AddSingleton<IRateLimitingService, SlidingWindowRateLimiter>();
@@ -19,8 +18,7 @@ builder.Services.AddSingleton<IRateLimitingService, SlidingWindowRateLimiter>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -29,4 +27,4 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run(); 
+app.Run();
