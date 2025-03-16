@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsGateway.Api", "SmsGateway.Api\SmsGateway.Api.csproj", "{FA2091D0-D4DE-47F7-9A55-02731A263480}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsGateway.Core", "SmsGateway.Core\SmsGateway.Core.csproj", "{0BF71BE9-6ED9-4D2A-8009-A57862DAB94E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsGateway.Tests", "SmsGateway.Tests\SmsGateway.Tests.csproj", "{54DA5B86-F92E-4C72-A43D-D1E8888E3566}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA2091D0-D4DE-47F7-9A55-02731A263480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA2091D0-D4DE-47F7-9A55-02731A263480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2091D0-D4DE-47F7-9A55-02731A263480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2091D0-D4DE-47F7-9A55-02731A263480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BF71BE9-6ED9-4D2A-8009-A57862DAB94E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BF71BE9-6ED9-4D2A-8009-A57862DAB94E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BF71BE9-6ED9-4D2A-8009-A57862DAB94E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BF71BE9-6ED9-4D2A-8009-A57862DAB94E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54DA5B86-F92E-4C72-A43D-D1E8888E3566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54DA5B86-F92E-4C72-A43D-D1E8888E3566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54DA5B86-F92E-4C72-A43D-D1E8888E3566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54DA5B86-F92E-4C72-A43D-D1E8888E3566}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

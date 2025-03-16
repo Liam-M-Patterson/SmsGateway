@@ -1,0 +1,8 @@
+src/
+backend/SmsGateway.Api/bin/
+backend/SmsGateway.Api/obj/
+backend/SmsGateway.Core/bin/
+backend/SmsGateway.Core/obj/
+backend/SmsGateway.Core/Infrastructure/
+backend/SmsGateway.Tests/bin/
+backend/SmsGateway.Tests/obj/
