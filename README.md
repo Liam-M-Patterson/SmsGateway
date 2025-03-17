@@ -14,9 +14,10 @@
 
 ## How to Test the Project
 
-1. Navigate to the test project directory (if applicable) or stay in the root directory.
+1. Navigate to the backend project directory (if applicable) or stay in the root directory.
 2. Run the tests using the following command:
     ```bash
+    
     dotnet test SmsGateway.Tests
     ```
 
