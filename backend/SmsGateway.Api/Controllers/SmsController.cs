@@ -31,19 +31,4 @@ public class SmsController : ControllerBase {
             return StatusCode(500, "An error occurred while checking rate limits");
         }
     }
-
-    [HttpPost("track")]
-    public async Task<IActionResult> TrackMessageSent([FromBody] SendSmsRequest request) {
-        try {
-            await _rateLimitingService.TrackMessageSent(
-                request.BusinessPhoneNumber,
-                request.AccountId);
-
-            return Ok();
-        }
-        catch (Exception ex) {
-            _logger.LogError(ex, "Error tracking message sent");
-            return StatusCode(500, "An error occurred while tracking the message");
-        }
-    }
 }

@@ -4,7 +4,7 @@ using SmsGateway.Core.Enums;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
 
-// [assembly: InternalsVisibleTo("SmsGateway.Tests")]
+[assembly: InternalsVisibleTo("SmsGateway.Tests")]
 namespace SmsGateway.Core;
 
 
@@ -15,8 +15,6 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
     internal Dictionary<string, LinkedList<DateTime>> _accountMessages = new();
     internal readonly ReaderWriterLockSlim _phoneNumberLock = new();
     internal readonly ReaderWriterLockSlim _accountLock = new();
-
-    // private readonly Dictionary
 
     public SlidingWindowRateLimiter(IOptions<RateLimitConfig> rateLimitConfig) {
         _rateLimitConfig = rateLimitConfig.Value;
@@ -59,7 +57,6 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
             return true;
 
         //Check if we can remove expired messages
-        // if (!CanPurgeMessageByTime(_phoneNumberMessages[phoneNumber].Peek(), now))
         if (now - _phoneNumberMessages[phoneNumber].First() < TimeSpan.FromSeconds(_rateLimitConfig.RefillRate))
             return false; //Message is too new, at the limit
 
@@ -68,7 +65,6 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
             while (_phoneNumberMessages[phoneNumber].Count > 0 && CanPurgeMessageByTime(_phoneNumberMessages[phoneNumber].First(), now)) {
                 _phoneNumberMessages[phoneNumber].RemoveFirst();
             }
-            // PurgeExpiredMessages(_phoneNumberMessages[phoneNumber], now);
         }
         finally {
             _phoneNumberLock.ExitWriteLock();
@@ -88,7 +84,6 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
 
 
         //Check if we can remove expired messages
-        // if (!CanPurgeMessageByTime(_accountMessages[accountId].Peek(), now))
         if (now - _accountMessages[accountId].First() < TimeSpan.FromSeconds(_rateLimitConfig.RefillRate))
             return false; //Message is too new, at the limit
 
@@ -97,7 +92,6 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
             while (_accountMessages[accountId].Count > 0 && CanPurgeMessageByTime(_accountMessages[accountId].First(), now)) {
                 _accountMessages[accountId].RemoveFirst();
             }
-            // PurgeExpiredMessages(_accountMessages[accountId], now);
         }
         finally {
             _accountLock.ExitWriteLock();
@@ -135,10 +129,6 @@ public class SlidingWindowRateLimiter : IRateLimitingService {
         while (messages.Count > 0 && CanPurgeMessageByTime(messages.Peek(), now)) {
             messages.Dequeue();
         }
-    }
-
-    public async Task TrackMessageSent(string businessPhoneNumber, string accountId) {
-        return;
     }
 
     public async Task CleanupStaleResources() {
